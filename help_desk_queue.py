@@ -4,13 +4,42 @@ from node import Node
 # Implement your Queue class here
 class Queue:
     # Delete the following line and implement your Queue class
-    pass
-    
+    def __init__(self):
+        self.front = None
+        self.rear = None
 
+    def enqueue(self, value):
+        new_node = Node(value)
+        if self.rear is None:
+            self.front = new_node
+            self.rear = new_node
+        else:
+            self.rear.next = new_node
+            self.rear = new_node
+
+    def dequeue(self):
+        if self.front is None:
+            return None
+        value = self.front.value
+        self.front = self.front.next
+        if self.front is None:
+            self.rear = None
+        return value
+
+    def peek(self):
+        if self.front is None:
+            return None
+        return self.front.value
+
+    def print_queue(self):
+        current = self.front
+        while current:
+            print(f"- {current.value}")
+            current = current.next
 
 def run_help_desk():
     # Create an instance of the Queue class
-    
+    queue = Queue()
 
     while True:
         print("\n--- Help Desk Ticketing System ---")
@@ -24,23 +53,29 @@ def run_help_desk():
         if choice == "1":
             name = input("Enter customer name: ")
             # Add the customer to the queue
-            
+            queue.enqueue(name)
             
             print(f"{name} added to the queue.")
         elif choice == "2":
             # Help the next customer in the queue and return message that they were helped
-            pass # delete this line
-
-
+            name = queue.dequeue()
+            if name is not None:
+                print(f"Helped: {name}")
+            else:
+                print("No customers waiting")
+                
         elif choice == "3":
             # Peek at the next customer in the queue and return their name
-            pass # delete this line
-
+            name = queue.peek()
+            if name is not None:
+                print(f"Next customer: {name}")
+            else:
+                print("No customers waiting.")
 
         elif choice == "4":
             # Print all customers in the queue
             print("\nWaiting customers:")
-            
+            queue.print_queue()
 
         elif choice == "5":
             print("Exiting Help Desk System.")
@@ -50,3 +85,20 @@ def run_help_desk():
 
 if __name__ == "__main__":
     run_help_desk()
+
+
+"When using the stack for the undo/redo in this assignmen the undo means reversing the most recent action first, which is exactly last-in, first-out behavior"
+"In my undo_redo_system.py, every new action us pushed onto undo_stack, and undo pops the top item, so actions are reversed in the opposite order they happened."
+"The popped action is pushed onto redo_stack, which also follows last-in, first-out order, so redo restores actions in their original order."
+"When a brand-new action is performed, I replaced redo_stack with a new stack, because the old redo history no longer applies to the document"
+
+"A queue is better suited as well becuase customers should be helped in the order they arrived, which is first-in, first-out."
+"In help_desk_queue.py, enqueue adds a custmer at the rear and dequeue removes from the front, so no one can be skipped"
+"A stack would serve the newest customer first and leave early arrivals waiting indefinetly, which would be unfair. Keeping both front and rear pointers lets enqueue and dequeue run in constant time."
+
+
+"The implementation I used differs from the pythons actual built in lists because they are actually built from linked node objects instead of contiguous array."
+"Each node stores a value and a next pointer, so the structures expose only the operations that matter. push, pop, and peek for the stack, and enqueue, dequeue, and peek for the queue."
+"Lists allow indexing and inserting or removing anywere, where this is more flexible than these behaviors need and maks it easy to break the intended order. "
+"Removing from the front of a list is also O(n) becasuse remaining items shift, while my dequeue only moves the front pointer. "
+"The tradeoff is that mine cannot access items by index."
